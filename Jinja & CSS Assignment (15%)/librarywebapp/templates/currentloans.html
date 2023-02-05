@@ -1,0 +1,54 @@
+<!-- Student: DEAN GIBSON
+    Student ID: 1154119
+-->
+
+{% extends "base.html" %}
+{% block content %}
+<!-- code in here to display a list of loans -->
+<!-- loanlist is the variable passed in containing list of loans -->
+
+<table class="table"> <!-- hidden column used to hide borrow id as required-->
+    {% set hiddenColumn=[1, 4] %}
+    {% set nameList=[] %}
+    <thead><tr>
+        {% for columnName in ['BorrowerID', 'FirstName', 'FamilyName', 'BorrowerID', 'BookcopyID', 'LoanDate', 'Returned', 'BookID', 'BookTitle', 'Author', 'Category', 'YearOfPublication', 'Format'] %}
+            <th {% if loop.index in hiddenColumn %}hidden{% endif %}>{{columnName}}</th>
+        {% endfor %}
+    </tr></thead>
+
+
+    <tbody>
+    {% for loan in loanlist %} <!--  function via app.py -->
+    {% set fullName = loan[1] + loan[2] %}   
+
+    <p hidden disabled> <!-- appending the names as requested results in "none" showing up multiple times, have put it in a hidden paragraph to hide it-->
+
+         {% if fullName not in nameList %} <!-- needed otherwise names will not show up in table at all-->
+            {{nameList.append(fullName)}}
+            {% set isShow=True %}
+        {% else %}
+            {% set isShow=False %}
+        {% endif %}
+    </p>
+    
+
+    <tr> <!-- used to mark whether returned or on loan, as well as multiple loans from single person-->
+    {% for column in loan %} 
+        <td {% if loop.index in hiddenColumn %}hidden{% endif %}>
+            {% if loop.index == 7 %}  
+                {% if column == 1 %}Returned{% else %}Onloan{% endif %}     
+             {% elif loop.index in [2, 3] %}  
+                {% if isShow %}{{column}}{% endif %} 
+            {% else %}
+                {{column}}
+            {% endif %}
+        </td>
+    {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+    
+</table> 
+
+
+{% endblock %}
